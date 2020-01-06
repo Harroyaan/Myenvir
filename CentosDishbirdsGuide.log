@@ -1,0 +1,115 @@
+####################################################
+#    Author:Harroy
+#
+####################################################
+
+###########    下载和卸载Chrome(请使用非root用户安装）
+1.下载
+yum install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+2.卸载
+rpm -e --nodeps google-chrome-stable
+
+###########    安装与配置SSH
+1.安装
+yum install -y openssl openssh-server
+2.修改配置文件
+vim /etc/ssh/sshd_config
+将 PermitRootLogin, RSAAuthentication, PubkeyAuthentication 设置为 yes
+3.启动SSH服务
+systemctl start sshd.service
+4.设置开机自启动
+systemctl enable sshd.service
+5.设置文件夹～/.ssh访问权限
+cd ~
+chmod 700 .ssh
+chmod 600 .ssh/*
+ls -la .ssh
+8.服务器免密登陆
+# 找到 .ssh 文件夹
+# 通过 atom 打开文件夹下的 id_rsa.pub
+# 复制其中的公钥
+# 连接服务器
+# 输入以下指令
+cd .ssh
+vim authorized_keys
+将公钥粘贴其中
+esc 后输入 :wq 保存退出
+# 完成服务器免密码登录配置
+
+###########    安装Ntfs-3g、fuse-exfat以及实现自动挂载
+1.安装
+yum install -y ntfs-3g
+yum install fuse-exfat -y
+(如果ntfs-3g失败先更新epel库）yum install -y epel-release
+(如果fuse-exfat失败先更新rpmfusion库）yum install -y http://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+2.自动挂载
+vi /sbin/mount.ntfs
+加入以下内容
+#!/bin/bash
+export  LANG=en_US.UTF-8
+exec   /sbin/mount.ntfs-3g "$@"
+增加执行权限
+chmod  a+x  /sbin/mount.ntfs
+
+###########    git安装与配置
+安装好后需要在 /etc/profile加入环境变量
+vim /etc/profile
+最后一行加入
+export PATH=$PATH:/opt/git/bin
+然后刷新profile
+source /etc/profile
+配置git
+git config --global user.name "Harroyaan"
+git config --global user.email "harroyaan@gmail.com"
+查看配置是否生效
+git config --list
+我的Centos环境库：git@github.com:Harroyaan/Myenvir.git
+
+###########    nginx安装依赖
+yum -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel
+
+###########    多个Python源切换
+设置最后的数字，数字为优先级
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3* 200
+然后在以下命令中修改使用的Python
+sudo update-alternatives --config python
+
+###########    更新Python后yum不能使用
+修改/usr/bin/yum  第一行为#!/usr/bin/python2
+修改/usr/libexec/urlgrabber-ext-down  第一行为#!/usr/bin/python2
+
+###########    普通用户添加sudo权限
+1.找到sudoers位置
+whereis sudoers
+2.修改sudoers权限
+chmod u+w /etc/sudoers
+3.修改etc/sudoers配置文件
+vi /etc/sudoers
+在  root    ALL=(ALL)       ALL  
+下一行，添加新用户
+4.需要将权限改回，系统才会运行
+chmod u-w /etc/sudoers
+
+############    Anaconda-navigator安装与启动
+下载与安装
+cd /Download
+wget  https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/Anaconda3-2019.10-Linux-x86_64.sh
+sudo bash Anaconda3-2019.10-Linux-x86_64.sh 
+此时navigator已经安装上，注意需要将环境变量放进用户下
+vim /home/harroy/.bashrc
+加上  
+ Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/opt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+然后再source一便即可，若变量在root账户下，浏览器将不能打开
