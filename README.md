@@ -7,33 +7,33 @@ Building for Cadence-Virtuoso.at 2020.01.03
 #Order:  
 ##1.更换yum源为阿里源  
 ```Bash
->sudo sh Change_Yum_Sources.sh<br>
+>sudo sh Change_Yum_Sources.sh
 ```
 ##2.加入第三方扩展库  
 ```Bash
->sudo sh Thirdparty_Yum.sh<br>
+>sudo sh Thirdparty_Yum.sh
 ``` 
 ##3.安装常用库  
 ```Bash
->sudo sh Cadence_Enviroment.sh<br>
+>sudo sh Cadence_Enviroment.sh
 ```  
 ##4.更新系统库  
 ```Bash
->sudo yum update -y<br>
+>sudo yum update -y
 ```  
 ##5.安装/解压Cadence  
 ```Bash
->sudo tar -xvf cadence.tar.gz -C /opt/<br>
+>sudo tar -xvf cadence.tar.gz -C /opt/
 ```  
 ##6.更改.cshrc，将其中 harroy 替换为自己主机的名字  
 ```Bash
->gedit .cshrc<br>
+>gedit .cshrc
 ```
 ##7.需要将bash更改为csh（由于.cshrc是csh命令）  
 ```Bash
->su（先进入root账户）<br> 
->vim /etc/passwd<br>
->将自己主机的shell路径由 /bin/bash 更改为 /bin/csh （一般在最后一行）<br>
+>su（先进入root账户） 
+>vim /etc/passwd
+>将自己主机的shell路径由 /bin/bash 更改为 /bin/csh （一般在最后一行）
 ```
 ##8.查看网卡mac地址并在calibre的license中修改  
 ```Bash
